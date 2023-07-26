@@ -2,19 +2,32 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include <QMainWindow>
-#include <QMutex>
-#include <QList>
+#include "fork.h"
+#include "philosopher.h"
 
-class MainWindow : public QMainWindow
+#include <QWidget>
+#include <QList>
+#include <QString>
+#include <QTextEdit>
+#include <QHBoxLayout>
+#include <QPushButton>
+
+class MainWindow : public QWidget
 
 {
     Q_OBJECT
 private:
-    const int forksCount = 5;
-    QList<QMutex*>* forks; // вилки, которыми пытаются есть философы
+    const int сount = 5;
+    QList<Fork*> initialForks; // вилки, которыми пытаются есть философы
+    QList<Philosopher*> initialPhilosofers; // сами философы
+
 public:
-    MainWindow(QWidget *parent = nullptr);
+    MainWindow(QWidget *parent = nullptr);    
+    ///
+    /// \brief startEating
+    /// Метод начала работы всех потоков задания
+    ///
+    void startEating();
     ~MainWindow();
 };
 
