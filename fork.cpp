@@ -8,7 +8,7 @@ Fork::Fork(QWidget *parent)
 
 void Fork::slotLock()
 {
-    locker.try_lock();
+    locker.lock();
 }
 
 void Fork::slotUnlock()

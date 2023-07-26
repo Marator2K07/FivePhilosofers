@@ -13,10 +13,6 @@ private:
 public:
     explicit Fork(QWidget *parent = nullptr);
 
-signals:
-    void taken(); // сигнал поднятия вилки со стола
-    void put(); // сигнал опускания вилки на стол
-
 private slots:
     void slotLock();
     void slotUnlock();
