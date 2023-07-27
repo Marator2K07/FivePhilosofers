@@ -3,23 +3,32 @@
 #define PHILOSOPHER_H
 
 #include "fork.h"
+#include "graphicsphilosoferitem.h"
 
-#include <QWidget>
 #include <QThread>
 #include <QList>
+#include <QRandomGenerator>
 
 class Philosopher : public QThread
 {
     Q_OBJECT
+
 private:
+    QString name; // для идентификации среди других философов
+    QString colorText; // цвет текста в инфо поле для большей наглядности
     Fork *leftFork; // вилка на столе слева от философа
     Fork *rightFork; // вилка на столке справа от философа
+    GraphicsPhilosoferItem *graphicsItem; // условное графическое представление философа
 
 public:
     explicit Philosopher(Fork *forkFirst,
-                         Fork *forkSecond);
+                         Fork *forkSecond,
+                         QString name,
+                         QString colorText,
+                         GraphicsPhilosoferItem* graphicsItem);
     const Fork* getLeftFork();
     const Fork* getRightFork();
+    const QString getColor();
 
 signals:
     void takeLeftFork();
@@ -32,7 +41,7 @@ signals:
     /// \param text
     /// текст для показа
     ///
-    void showInfo(QString);
+    void showInfo(const QString);
 
     // QThread interface
 protected:
