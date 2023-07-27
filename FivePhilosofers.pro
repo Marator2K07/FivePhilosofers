@@ -10,14 +10,18 @@ CONFIG += c++17
 
 SOURCES += \
     fork.cpp \
+    graphicsphilosoferitem.cpp \
     main.cpp \
     mainwindow.cpp \
-    philosopher.cpp
+    philosopher.cpp \
+    presentation.cpp
 
 HEADERS += \
     fork.h \
+    graphicsphilosoferitem.h \
     mainwindow.h \
-    philosopher.h
+    philosopher.h \
+    presentation.h
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

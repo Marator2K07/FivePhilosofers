@@ -4,13 +4,13 @@
 
 #include "fork.h"
 #include "philosopher.h"
+#include "presentation.h"
 
 #include <QWidget>
 #include <QList>
 #include <QString>
 #include <QTextEdit>
-#include <QHBoxLayout>
-#include <QPushButton>
+#include <QVBoxLayout>
 
 class MainWindow : public QWidget
 
