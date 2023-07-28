@@ -5,17 +5,25 @@
 MainWindow::MainWindow(QWidget *parent)
     : QWidget(parent)
 {
-    // инициализируем коллекцию вилок, а потом и каждую из пяти штук
-    for (int i= 0; i < сount; ++i) {
-        initialForks.append(new Fork());
-    }
+    // создаем и инициализируем схематические графические представления вилок
+    GraphicsForkItem* fork01GraphicsItem = new GraphicsForkItem("fork01", "grey");
+    GraphicsForkItem* fork12GraphicsItem = new GraphicsForkItem("fork12", "grey");
+    GraphicsForkItem* fork23GraphicsItem = new GraphicsForkItem("fork23", "grey");
+    GraphicsForkItem* fork34GraphicsItem = new GraphicsForkItem("fork34", "grey");
+    GraphicsForkItem* fork41GraphicsItem = new GraphicsForkItem("fork41", "grey");
+    // инициализируем коллекцию вилок
+    initialForks.append(new Fork(fork01GraphicsItem));
+    initialForks.append(new Fork(fork12GraphicsItem));
+    initialForks.append(new Fork(fork23GraphicsItem));
+    initialForks.append(new Fork(fork34GraphicsItem));
+    initialForks.append(new Fork(fork41GraphicsItem));
+
     // создаем и инициализируем схематические графические представления философов
     GraphicsPhilosoferItem* epikurGraphicsItem = new GraphicsPhilosoferItem("Epicur", "green");
     GraphicsPhilosoferItem* aristotelGraphicsItem = new GraphicsPhilosoferItem("Aristotel", "sandybrown");
     GraphicsPhilosoferItem* platonGraphicsItem = new GraphicsPhilosoferItem("Platon", "red");
     GraphicsPhilosoferItem* sokratGraphicsItem = new GraphicsPhilosoferItem("Sokrat", "blue");
     GraphicsPhilosoferItem* pifagorGraphicsItem = new GraphicsPhilosoferItem("Pifagor", "rosybrown");
-
     // теперь инициализируем и философов, каждому даем по потенциально доступной вилке
     initialPhilosofers.append(new Philosopher(initialForks.value(0),
                                               initialForks.value(1),
@@ -37,6 +45,7 @@ MainWindow::MainWindow(QWidget *parent)
                                               initialForks.value(0),
                                               "Pifagor", "rosybrown",
                                               pifagorGraphicsItem));
+
     // текстовое поле для вывода информационных сообщений
     QTextEdit *p_textInfo = new QTextEdit();
     p_textInfo->setReadOnly(true);
@@ -64,23 +73,30 @@ MainWindow::MainWindow(QWidget *parent)
                          p_textInfo,
                          SLOT(append(QString)));
     }
-
+    // создаем и инициализируем обьект графического представления задачи
     Presentation* presentation =
         new Presentation(new QList<GraphicsPhilosoferItem *>{
-                                         epikurGraphicsItem,
-                                         aristotelGraphicsItem,
-                                         platonGraphicsItem,
-                                         sokratGraphicsItem,
-                                         pifagorGraphicsItem
-                                     }, this);
-
+                             epikurGraphicsItem,
+                             aristotelGraphicsItem,
+                             platonGraphicsItem,
+                             sokratGraphicsItem,
+                             pifagorGraphicsItem
+                         },
+                         new QList<GraphicsForkItem *>{
+                             fork01GraphicsItem,
+                             fork12GraphicsItem,
+                             fork23GraphicsItem,
+                             fork34GraphicsItem,
+                             fork41GraphicsItem
+                         },
+                         this);
     // layout settings
     QVBoxLayout *layoutMain = new QVBoxLayout;
     layoutMain->addWidget(p_textInfo);
     layoutMain->addWidget(presentation);
     setLayout(layoutMain);
 
-    setFixedSize(800, 700);
+    setFixedSize(800, 800);
 }
 
 void MainWindow::startEating()
