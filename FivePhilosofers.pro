@@ -10,6 +10,8 @@ CONFIG += c++17
 
 SOURCES += \
     fork.cpp \
+    graphicscenteredtextitem.cpp \
+    graphicsforkitem.cpp \
     graphicsphilosoferitem.cpp \
     main.cpp \
     mainwindow.cpp \
@@ -18,6 +20,8 @@ SOURCES += \
 
 HEADERS += \
     fork.h \
+    graphicscenteredtextitem.h \
+    graphicsforkitem.h \
     graphicsphilosoferitem.h \
     mainwindow.h \
     philosopher.h \
