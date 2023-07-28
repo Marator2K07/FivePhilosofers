@@ -1,14 +1,17 @@
 
 #include "fork.h"
 
-Fork::Fork(QWidget *parent)
-    : QWidget{parent}
+Fork::Fork(GraphicsForkItem *graphicsItem,
+           QWidget *parent)
+    : graphicsItem{graphicsItem}
+    , QWidget{parent}
 {
 }
 
 void Fork::slotLock()
 {
     locker.lock();
+    graphicsItem->setTakeColor();
 }
 
 void Fork::slotUnlock()
