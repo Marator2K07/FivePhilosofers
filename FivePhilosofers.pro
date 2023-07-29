@@ -15,6 +15,7 @@ SOURCES += \
     graphicsphilosoferitem.cpp \
     main.cpp \
     mainwindow.cpp \
+    philosofergraphics.cpp \
     philosopher.cpp \
     presentation.cpp
 
@@ -24,6 +25,7 @@ HEADERS += \
     graphicsforkitem.h \
     graphicsphilosoferitem.h \
     mainwindow.h \
+    philosofergraphics.h \
     philosopher.h \
     presentation.h
 
