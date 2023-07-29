@@ -11,7 +11,7 @@ private:
     QString name;
     QString takeColor;
     QString dropColor;
-    int width = 12; // ширина линии
+    int width = 11; // ширина линии
 
 public:
     GraphicsForkItem(QString name,
