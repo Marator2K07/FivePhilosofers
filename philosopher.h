@@ -3,49 +3,47 @@
 #define PHILOSOPHER_H
 
 #include "fork.h"
-#include "graphicsphilosoferitem.h"
+#include "philosofergraphics.h"
 
-#include <QThread>
+#include <QObject>
 #include <QList>
 #include <QRandomGenerator>
 
-class Philosopher : public QThread
+class Philosopher : public QObject
 {
     Q_OBJECT
 
 private:
-    QString name; // для идентификации среди других философов
-    QString colorText; // цвет текста в инфо поле для большей наглядности
+    QString name;
+    QString colorText;
     Fork *leftFork; // вилка на столе слева от философа
-    Fork *rightFork; // вилка на столке справа от философа
-    GraphicsPhilosoferItem *graphicsItem; // условное графическое представление философа
+    Fork *rightFork; // вилка на столе справа от философа
+    PhilosoferGraphics *graphics; // графическое схематическое представление философа
 
 public:
     explicit Philosopher(Fork *forkFirst,
                          Fork *forkSecond,
                          QString name,
-                         QString colorText,
-                         GraphicsPhilosoferItem* graphicsItem);
+                         QString colorText);
     const Fork* getLeftFork();
     const Fork* getRightFork();
     const QString getColor();
+    PhilosoferGraphics *getGraphics();
 
 signals:
     void takeLeftFork();
     void putLeftFork();
     void takeRightFork();
     void putRightFork();
-    ///
-    /// \brief showInfo
-    /// сигнал показа деталей происходящих операций в текстовом поле виджета
-    /// \param text
-    /// текст для показа
-    ///
-    void showInfo(const QString);
+    void changeStatus(QString statusText,
+                      QString fullText,
+                      QString borderColor);
 
-    // QThread interface
-protected:
-    void run() override;
+public slots:
+    ///
+    /// \brief taskExecution
+    /// основной метод выполнения поставленной задачи
+    void taskExecution();
 };
 
 #endif // PHILOSOPHER_H
