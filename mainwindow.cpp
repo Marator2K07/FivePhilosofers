@@ -5,89 +5,56 @@
 MainWindow::MainWindow(QWidget *parent)
     : QWidget(parent)
 {
-    // создаем и инициализируем схематические графические представления вилок
-    GraphicsForkItem* fork01GraphicsItem = new GraphicsForkItem("fork01", "grey");
-    GraphicsForkItem* fork12GraphicsItem = new GraphicsForkItem("fork12", "grey");
-    GraphicsForkItem* fork23GraphicsItem = new GraphicsForkItem("fork23", "grey");
-    GraphicsForkItem* fork34GraphicsItem = new GraphicsForkItem("fork34", "grey");
-    GraphicsForkItem* fork41GraphicsItem = new GraphicsForkItem("fork41", "grey");
     // инициализируем коллекцию вилок
-    initialForks.append(new Fork(fork01GraphicsItem));
-    initialForks.append(new Fork(fork12GraphicsItem));
-    initialForks.append(new Fork(fork23GraphicsItem));
-    initialForks.append(new Fork(fork34GraphicsItem));
-    initialForks.append(new Fork(fork41GraphicsItem));
-
-    // создаем и инициализируем схематические графические представления философов
-    GraphicsPhilosoferItem* epikurGraphicsItem = new GraphicsPhilosoferItem("Epicur", "green");
-    GraphicsPhilosoferItem* aristotelGraphicsItem = new GraphicsPhilosoferItem("Aristotel", "sandybrown");
-    GraphicsPhilosoferItem* platonGraphicsItem = new GraphicsPhilosoferItem("Platon", "red");
-    GraphicsPhilosoferItem* sokratGraphicsItem = new GraphicsPhilosoferItem("Sokrat", "blue");
-    GraphicsPhilosoferItem* pifagorGraphicsItem = new GraphicsPhilosoferItem("Pifagor", "rosybrown");
+    forks.append(new Fork("fork01","grey",this));
+    forks.append(new Fork("fork12","grey",this));
+    forks.append(new Fork("fork23","grey",this));
+    forks.append(new Fork("fork34","grey",this));
+    forks.append(new Fork("fork41","grey",this));
     // теперь инициализируем и философов, каждому даем по потенциально доступной вилке
-    initialPhilosofers.append(new Philosopher(initialForks.value(0),
-                                              initialForks.value(1),
-                                              "Epikur", "green",
-                                              epikurGraphicsItem));
-    initialPhilosofers.append(new Philosopher(initialForks.value(1),
-                                              initialForks.value(2),
-                                              "Aristotel", "sandybrown",
-                                              aristotelGraphicsItem));
-    initialPhilosofers.append(new Philosopher(initialForks.value(2),
-                                              initialForks.value(3),
-                                              "Platon", "red",
-                                              platonGraphicsItem));
-    initialPhilosofers.append(new Philosopher(initialForks.value(3),
-                                              initialForks.value(4),
-                                              "Sokrat", "blue",
-                                              sokratGraphicsItem));
-    initialPhilosofers.append(new Philosopher(initialForks.value(4),
-                                              initialForks.value(0),
-                                              "Pifagor", "rosybrown",
-                                              pifagorGraphicsItem));
+    philosofers.append(new Philosopher(forks.value(0), forks.value(1),
+                                       "Epikur", "green"));
+    philosofers.append(new Philosopher(forks.value(1), forks.value(2),
+                                       "Aristotel", "sandybrown"));
+    philosofers.append(new Philosopher(forks.value(2), forks.value(3),
+                                       "Platon", "red"));
+    philosofers.append(new Philosopher(forks.value(3), forks.value(4),
+                                       "Sokrat", "blue"));
+    philosofers.append(new Philosopher(forks.value(4), forks.value(0),
+                                       "Pifagor", "rosybrown"));
 
-    // текстовое поле для вывода информационных сообщений
+    // текстовое поле для вывода информационных сообщений (лог)
     QTextEdit *p_textInfo = new QTextEdit();
     p_textInfo->setReadOnly(true);
     p_textInfo->setStyleSheet("QTextEdit {background-color : Gainsboro}");
     // для каждого из философов проставляем сигнально-слотовые соединения
     for (int i = 0; i < сount; ++i) {
-        QObject::connect(initialPhilosofers.value(i),
-                         SIGNAL(takeLeftFork()),
-                         initialPhilosofers.value(i)->getLeftFork(),
-                         SLOT(slotLock()));
-        QObject::connect(initialPhilosofers.value(i),
-                         SIGNAL(putLeftFork()),
-                         initialPhilosofers.value(i)->getLeftFork(),
-                         SLOT(slotUnlock()));
-        QObject::connect(initialPhilosofers.value(i),
-                         SIGNAL(takeRightFork()),
-                         initialPhilosofers.value(i)->getLeftFork(),
-                         SLOT(slotLock()));
-        QObject::connect(initialPhilosofers.value(i),
-                         SIGNAL(putRightFork()),
-                         initialPhilosofers.value(i)->getLeftFork(),
-                         SLOT(slotUnlock()));
-        QObject::connect(initialPhilosofers.value(i),
-                         SIGNAL(showInfo(QString)),
-                         p_textInfo,
-                         SLOT(append(QString)));
+        connect(philosofers.value(i), SIGNAL(takeLeftFork()),
+                philosofers.value(i)->getLeftFork(), SLOT(slotLock()));
+        connect(philosofers.value(i), SIGNAL(putLeftFork()),
+                philosofers.value(i)->getLeftFork(), SLOT(slotUnlock()));
+        connect(philosofers.value(i), SIGNAL(takeRightFork()),
+                philosofers.value(i)->getLeftFork(), SLOT(slotLock()));
+        connect(philosofers.value(i), SIGNAL(putRightFork()),
+                philosofers.value(i)->getLeftFork(), SLOT(slotUnlock()));
+        connect(philosofers.value(i)->getGraphics(), SIGNAL(showInfoInLog(QString)),
+                p_textInfo, SLOT(append(QString)));
     }
     // создаем и инициализируем обьект графического представления задачи
     Presentation* presentation =
         new Presentation(new QList<GraphicsPhilosoferItem *>{
-                             epikurGraphicsItem,
-                             aristotelGraphicsItem,
-                             platonGraphicsItem,
-                             sokratGraphicsItem,
-                             pifagorGraphicsItem
+                             philosofers.value(0)->getGraphics()->getItem(),
+                             philosofers.value(1)->getGraphics()->getItem(),
+                             philosofers.value(2)->getGraphics()->getItem(),
+                             philosofers.value(3)->getGraphics()->getItem(),
+                             philosofers.value(4)->getGraphics()->getItem()
                          },
                          new QList<GraphicsForkItem *>{
-                             fork01GraphicsItem,
-                             fork12GraphicsItem,
-                             fork23GraphicsItem,
-                             fork34GraphicsItem,
-                             fork41GraphicsItem
+                             forks.value(0)->getGraphicsItem(),
+                             forks.value(1)->getGraphicsItem(),
+                             forks.value(2)->getGraphicsItem(),
+                             forks.value(3)->getGraphicsItem(),
+                             forks.value(4)->getGraphicsItem()
                          },
                          this);
     // layout settings
@@ -95,20 +62,27 @@ MainWindow::MainWindow(QWidget *parent)
     layoutMain->addWidget(p_textInfo);
     layoutMain->addWidget(presentation);
     setLayout(layoutMain);
-
     setFixedSize(800, 800);
-}
 
-void MainWindow::startEating()
-{
-    emit initialPhilosofers.value(0)->showInfo("Testing");
-    foreach (Philosopher* ph, initialPhilosofers) {
-        ph->start();
+    // а теперь наконец-то запускаем потоки
+    foreach (Philosopher* ph, philosofers) {
+        QThread *thread = new QThread(this);
+        connect(thread, SIGNAL(started()),
+                ph, SLOT(taskExecution()));
+        ph->moveToThread(thread);
+        philosofersThreads.append(thread);
+        thread->start();
     }
 }
 
 MainWindow::~MainWindow()
 {
+    // чтобы приложение закрывалось без исключений, надо каждый поток
+    // плавно остановить
+    foreach (QThread* thread, philosofersThreads) {
+        thread->quit();
+        thread->wait();
+    }
 }
 
 
