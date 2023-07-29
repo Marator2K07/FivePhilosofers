@@ -11,12 +11,16 @@ class Fork : public QWidget
 {
     Q_OBJECT
 private:
+    QString name;
+    QString color;
     QMutex locker;
     GraphicsForkItem *graphicsItem; // условное графическое представление вилки на столе
 
 public:
-    explicit Fork(GraphicsForkItem *graphicsItem,
+    explicit Fork(QString name,
+                  QString color,
                   QWidget *parent = nullptr);
+    GraphicsForkItem *getGraphicsItem();
 
 private slots:
     void slotLock();
