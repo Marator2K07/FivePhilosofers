@@ -21,8 +21,13 @@ void GraphicsPhilosoferItem::statusInitialization()
     status->setPos(parentRect.topLeft().rx(),
                    parentRect.topLeft().ry());
     // задание шрифта и его применение
-    QFont sansFont("Helvetica [Cronyx]", 12);
+    QFont sansFont("Helvetica [Cronyx]", 14);
     status->setFont(sansFont);
     status->setPlainText("...");
+}
+
+void GraphicsPhilosoferItem::setStatusText(const QString text)
+{
+    status->setPlainText(text);
 }
 

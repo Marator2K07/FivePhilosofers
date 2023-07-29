@@ -5,7 +5,6 @@
 #include "graphicscenteredtextitem.h"
 
 #include <QGraphicsEllipseItem>
-#include <QGraphicsScene>
 #include <QBrush>
 #include <QPen>
 
@@ -27,6 +26,7 @@ public:
     /// условий
     ///
     void statusInitialization();
+    void setStatusText(const QString text);
 };
 
 #endif // GRAPHICSPHILOSOFERITEM_H
