@@ -22,6 +22,7 @@ private:
     QMutex *leftMutex;
     QMutex *rightMutex;
     PhilosoferGraphics *graphics; // графическое схематическое представление философа
+    bool stoped;
 
 private:
     ///
@@ -86,7 +87,8 @@ public:
     const Fork* getLeftFork();
     const Fork* getRightFork();
     const QString getColor();
-    PhilosoferGraphics *getGraphics();
+    PhilosoferGraphics *getGraphics();    
+    void stop();
 
 signals:
     void takeLeftFork(QString color);

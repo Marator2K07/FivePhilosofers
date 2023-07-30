@@ -74,10 +74,9 @@ MainWindow::MainWindow(QWidget *parent)
     setFixedSize(800, 800);
 
     // а теперь наконец-то запускаем потоки
-    foreach (Philosopher* ph, philosofers) {
+    foreach (Philosopher *ph, philosofers) {
         QThread *thread = new QThread(this);
-        connect(thread, SIGNAL(started()),
-                ph, SLOT(taskExecution()));
+        connect(thread, SIGNAL(started()), ph, SLOT(taskExecution()));
         ph->moveToThread(thread);
         philosofersThreads.append(thread);
         thread->start();
@@ -86,6 +85,11 @@ MainWindow::MainWindow(QWidget *parent)
 
 MainWindow::~MainWindow()
 {
+    // из основного потока даем команду остановиться запущенным потокам
+    // не сразу конечно, а когда доделают итерацию
+    foreach (Philosopher *ph, philosofers) {
+        ph->stop();
+    }
     // чтобы приложение закрывалось без исключений, надо каждый поток
     // плавно остановить
     foreach (QThread* thread, philosofersThreads) {

@@ -132,6 +132,7 @@ Philosopher::Philosopher(Fork *forkLeft,
     , rightMutex{rightMutex}
     , name{name}
     , color{color}
+    , stoped{false}
 {
     graphics = new PhilosoferGraphics(name, color);
     connect(this, SIGNAL(changeStatus(QString,QString,QString)),
@@ -166,7 +167,7 @@ void Philosopher::taskExecution()
     // подготовительная часть
     preparation(defaultPause);
     // прелюдия закончилась, теперь начинается основное действие
-    while(true) {
+    while(!stoped) {
         reflection(&time, defaultPause);
         tryTakeLeftFork(&blocked, defaultPause);
         // если левая вилка была доступна - мы ее взяли и заблокировали мьютексом
@@ -191,6 +192,11 @@ void Philosopher::taskExecution()
             failedUseLeftFork(defaultPause);
         }
     }
+}
+
+void Philosopher::stop()
+{
+    stoped = true;
 }
 
 
