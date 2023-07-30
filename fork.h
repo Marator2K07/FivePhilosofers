@@ -4,27 +4,26 @@
 
 #include "graphicsforkitem.h"
 
-#include <QWidget>
-#include <QMutex>
+#include <QObject>
 
-class Fork : public QWidget
+class Fork : public QObject
 {
     Q_OBJECT
 private:
     QString name;
     QString color;
-    QMutex locker;
     GraphicsForkItem *graphicsItem; // условное графическое представление вилки на столе
 
 public:
     explicit Fork(QString name,
                   QString color,
-                  QWidget *parent = nullptr);
+                  QObject *parent = nullptr);
     GraphicsForkItem *getGraphicsItem();
+    bool isLocked();
 
 private slots:
-    void slotLock();
-    void slotUnlock();
+    void slotTake(QString color);
+    void slotPut();
 };
 
 #endif // FORK_H

@@ -3,8 +3,8 @@
 
 Fork::Fork(QString name,
            QString color,
-           QWidget *parent)
-    : QWidget{parent}
+           QObject *parent)
+    : QObject{parent}
     , name{name}
     , color{color}
 {
@@ -16,14 +16,13 @@ GraphicsForkItem *Fork::getGraphicsItem()
     return graphicsItem;
 }
 
-void Fork::slotLock()
+void Fork::slotTake(QString color)
 {
-    locker.lock();
-    graphicsItem->setTakeColor();
+    graphicsItem->setTakeColor(color);
 }
 
-void Fork::slotUnlock()
+void Fork::slotPut()
 {
-    locker.unlock();
+    graphicsItem->setDropColor();
 }
 
