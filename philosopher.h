@@ -6,6 +6,7 @@
 #include "philosofergraphics.h"
 
 #include <QObject>
+#include <QMutex>
 #include <QList>
 #include <QRandomGenerator>
 
@@ -15,25 +16,29 @@ class Philosopher : public QObject
 
 private:
     QString name;
-    QString colorText;
+    QString color;
     Fork *leftFork; // вилка на столе слева от философа
     Fork *rightFork; // вилка на столе справа от философа
+    QMutex *leftMutex;
+    QMutex *rightMutex;
     PhilosoferGraphics *graphics; // графическое схематическое представление философа
 
 public:
-    explicit Philosopher(Fork *forkFirst,
-                         Fork *forkSecond,
+    explicit Philosopher(Fork *forkLeft,
+                         Fork *forkRight,
+                         QMutex *leftMutex,
+                         QMutex *rightMutex,
                          QString name,
-                         QString colorText);
+                         QString color);
     const Fork* getLeftFork();
     const Fork* getRightFork();
     const QString getColor();
     PhilosoferGraphics *getGraphics();
 
 signals:
-    void takeLeftFork();
+    void takeLeftFork(QString color);
     void putLeftFork();
-    void takeRightFork();
+    void takeRightFork(QString color);
     void putRightFork();
     void changeStatus(QString statusText,
                       QString fullText,

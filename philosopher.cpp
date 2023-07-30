@@ -1,16 +1,20 @@
 
 #include "philosopher.h"
 
-Philosopher::Philosopher(Fork *forkFirst,
-                         Fork *forkSecond,
+Philosopher::Philosopher(Fork *forkLeft,
+                         Fork *forkRight,
+                         QMutex *leftMutex,
+                         QMutex *rightMutex,
                          QString name,
-                         QString colorText)
-    : leftFork{forkFirst}
-    , rightFork{forkSecond}
+                         QString color)
+    : leftFork{forkLeft}
+    , rightFork{forkRight}
+    , leftMutex{leftMutex}
+    , rightMutex{rightMutex}
     , name{name}
-    , colorText{colorText}
+    , color{color}
 {
-    graphics = new PhilosoferGraphics(name, colorText);
+    graphics = new PhilosoferGraphics(name, color);
     connect(this, SIGNAL(changeStatus(QString,QString,QString)),
             graphics, SLOT(slotChangeStatus(QString,QString,QString)));
 }
@@ -27,7 +31,7 @@ const Fork *Philosopher::getRightFork()
 
 const QString Philosopher::getColor()
 {
-    return colorText;
+    return color;
 }
 
 PhilosoferGraphics *Philosopher::getGraphics()
@@ -37,26 +41,90 @@ PhilosoferGraphics *Philosopher::getGraphics()
 
 void Philosopher::taskExecution()
 {
+    bool blocked;
+    int time;
+    int defaultPause = 1111;
+    // подготовительная часть
     emit changeStatus("Сел за стол",
                       QString("Философ <font color=\"%1\" size=\"4\">%2</font> садится за стол с едой;")
-                          .arg(colorText, name),
-                      "grey");
-    int time = QRandomGenerator::global()->bounded(1,5000);
-    QThread::msleep(QRandomGenerator::global()->bounded(1,5000));
-    emit changeStatus("Начинает размышлять",
-                      QString("Философ <font color=\"%1\" size=\"4\">%2</font> "
-                          "начинает размышлять %3 миллисекунд;")
-                          .arg(colorText, name).arg(time),
-                      "black");
-    QThread::msleep(time);
-    emit changeStatus("Закончил размышлять",
-                      QString("Философ <font color=\"%1\" size=\"4\">%2</font> закончил размышлять;")
-                          .arg(colorText, name),
-                      "grey");
-    emit takeLeftFork();
+                          .arg(color, name),
+                      "grey");    
+    QThread::msleep(defaultPause);
+    // прелюдия закончилась, теперь начинается основное действие
+    while(true) {
+        time = QRandomGenerator::global()->bounded(1000,5000);
+        emit changeStatus("Начинает размышлять",
+                          QString("Философ <font color=\"%1\" size=\"4\">%2</font> "
+                                  "начинает размышлять %3 миллисекунд;")
+                              .arg(color, name).arg(time),
+                          "black");
+        QThread::msleep(time);
+        emit changeStatus("Закончил размышлять",
+                          QString("Философ <font color=\"%1\" size=\"4\">%2</font> закончил размышлять;")
+                              .arg(color, name),
+                          "grey");
+        blocked = leftMutex->try_lock();
+        emit changeStatus("Пытается взять левую вилку",
+                          QString("Философ <font color=\"%1\" size=\"4\">%2</font> пытается взять левую вилку;")
+                              .arg(color, name),
+                          "grey");
+        if (blocked) {
+            emit takeLeftFork(color);
+            emit changeStatus("Успешно взял левую вилку",
+                              QString("Философ <font color=\"%1\" size=\"4\">%2</font> успешно взял левую вилку;")
+                                  .arg(color, name),
+                              "mediumslateblue");
+            QThread::msleep(defaultPause);
+            time = QRandomGenerator::global()->bounded(1000,5000);
+            emit changeStatus("Начинает размышлять",
+                              QString("Философ <font color=\"%1\" size=\"4\">%2</font> "
+                                      "начинает размышлять %3 миллисекунд;")
+                                  .arg(color, name).arg(time),
+                              "black");
+            QThread::msleep(time);
+            emit changeStatus("Закончил размышлять",
+                              QString("Философ <font color=\"%1\" size=\"4\">%2</font> закончил размышлять;")
+                                  .arg(color, name),
+                              "grey");
+            blocked = rightMutex->try_lock();
+            emit changeStatus("Пытается взять правую вилку",
+                              QString("Философ <font color=\"%1\" size=\"4\">%2</font> пытается взять правую вилку;")
+                                  .arg(color, name),
+                              "grey");
+            if (blocked) {
+                emit takeRightFork(color);
+                emit changeStatus("Успешно взял правую вилку",
+                                  QString("Философ <font color=\"%1\" size=\"4\">%2</font> успешно взял правую вилку;")
+                                      .arg(color, name),
+                                  "mediumslateblue");
+                QThread::msleep(defaultPause);
+                time = QRandomGenerator::global()->bounded(1,5000);
+                emit changeStatus("Начинает принимать пищу",
+                                  QString("Философ <font color=\"%1\" size=\"4\">%2</font> "
+                                          "принимается за трепазу длительностью %3 миллисекунд;")
+                                      .arg(color, name).arg(time),
+                                  "darkviolet");
+                QThread::msleep(time);
+                emit changeStatus("Закончил принимать пищу",
+                                  QString("Философ <font color=\"%1\" size=\"4\">%2</font> закончил принимать пищу;")
+                                      .arg(color, name),
+                                  "grey");
+                QThread::msleep(defaultPause);
+                emit changeStatus("Кладет вилки на место.",
+                                  QString("Философ <font color=\"%1\" size=\"4\">%2</font> кладет вилки на место;")
+                                      .arg(color, name),
+                                  "grey");
+                QThread::msleep(defaultPause);
+                emit putRightFork();
+                rightMutex->unlock();
+            }
+            emit putLeftFork();
+            leftMutex->unlock();
+        }
 
-    //while(true) {
-    //}
+        //rightForkLocker.lock();
+        //emit takeRightFork(color);
+    }
 }
 
 
