@@ -9,15 +9,13 @@ class GraphicsForkItem : public QGraphicsLineItem
 {
 private:
     QString name;
-    QString takeColor;
     QString dropColor;
     int width = 11; // ширина линии
 
 public:
     GraphicsForkItem(QString name,
-                     QString takeColor,
                      QString dropColor = "black");
-    void setTakeColor();
+    void setTakeColor(QString color);
     void setDropColor();
 };
 

@@ -2,18 +2,16 @@
 #include "graphicsforkitem.h"
 
 GraphicsForkItem::GraphicsForkItem(QString name,
-                                   QString takeColor,
                                    QString dropColor)
     : name{name}
-    , takeColor{takeColor}
     , dropColor{dropColor}
 {
     setDropColor();
 }
 
-void GraphicsForkItem::setTakeColor()
+void GraphicsForkItem::setTakeColor(QString color)
 {
-    setPen(QPen(QColor(takeColor), width));
+    setPen(QPen(QColor(color), width));
 }
 
 void GraphicsForkItem::setDropColor()
