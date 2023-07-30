@@ -21,6 +21,7 @@ class MainWindow : public QWidget
 private:
     const int сount = 5;
     QList<Fork *> forks; // вилки, которыми пытаются есть философы
+    QList<QMutex *> mutexes; // блокировки для корректной работы
     QList<Philosopher *> philosofers; // сами философы
     QList<QThread *> philosofersThreads; // потоки для работы философов
 

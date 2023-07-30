@@ -5,22 +5,31 @@
 MainWindow::MainWindow(QWidget *parent)
     : QWidget(parent)
 {
+    // инициализируев блокировки
+    for (int i = 0; i < сount; ++i) {
+        mutexes.append(new QMutex);
+    }
     // инициализируем коллекцию вилок
-    forks.append(new Fork("fork01","grey",this));
-    forks.append(new Fork("fork12","grey",this));
-    forks.append(new Fork("fork23","grey",this));
-    forks.append(new Fork("fork34","grey",this));
-    forks.append(new Fork("fork41","grey",this));
+    forks.append(new Fork("fork1","black",this));
+    forks.append(new Fork("fork2","black",this));
+    forks.append(new Fork("fork3","black",this));
+    forks.append(new Fork("fork4","black",this));
+    forks.append(new Fork("fork5","black",this));
     // теперь инициализируем и философов, каждому даем по потенциально доступной вилке
-    philosofers.append(new Philosopher(forks.value(0), forks.value(1),
+    philosofers.append(new Philosopher(forks.value(0), forks.value(4),
+                                       mutexes.value(0), mutexes.value(4),
                                        "Epikur", "green"));
-    philosofers.append(new Philosopher(forks.value(1), forks.value(2),
+    philosofers.append(new Philosopher(forks.value(1), forks.value(0),
+                                       mutexes.value(1), mutexes.value(0),
                                        "Aristotel", "sandybrown"));
-    philosofers.append(new Philosopher(forks.value(2), forks.value(3),
+    philosofers.append(new Philosopher(forks.value(2), forks.value(1),
+                                       mutexes.value(2), mutexes.value(1),
                                        "Platon", "red"));
-    philosofers.append(new Philosopher(forks.value(3), forks.value(4),
+    philosofers.append(new Philosopher(forks.value(3), forks.value(2),
+                                       mutexes.value(3), mutexes.value(2),
                                        "Sokrat", "blue"));
-    philosofers.append(new Philosopher(forks.value(4), forks.value(0),
+    philosofers.append(new Philosopher(forks.value(4), forks.value(3),
+                                       mutexes.value(4), mutexes.value(3),
                                        "Pifagor", "rosybrown"));
 
     // текстовое поле для вывода информационных сообщений (лог)
@@ -29,14 +38,14 @@ MainWindow::MainWindow(QWidget *parent)
     p_textInfo->setStyleSheet("QTextEdit {background-color : Gainsboro}");
     // для каждого из философов проставляем сигнально-слотовые соединения
     for (int i = 0; i < сount; ++i) {
-        connect(philosofers.value(i), SIGNAL(takeLeftFork()),
-                philosofers.value(i)->getLeftFork(), SLOT(slotLock()));
+        connect(philosofers.value(i), SIGNAL(takeLeftFork(QString)),
+                philosofers.value(i)->getLeftFork(), SLOT(slotTake(QString)));
         connect(philosofers.value(i), SIGNAL(putLeftFork()),
-                philosofers.value(i)->getLeftFork(), SLOT(slotUnlock()));
-        connect(philosofers.value(i), SIGNAL(takeRightFork()),
-                philosofers.value(i)->getLeftFork(), SLOT(slotLock()));
+                philosofers.value(i)->getLeftFork(), SLOT(slotPut()));
+        connect(philosofers.value(i), SIGNAL(takeRightFork(QString)),
+                philosofers.value(i)->getRightFork(), SLOT(slotTake(QString)));
         connect(philosofers.value(i), SIGNAL(putRightFork()),
-                philosofers.value(i)->getLeftFork(), SLOT(slotUnlock()));
+                philosofers.value(i)->getRightFork(), SLOT(slotPut()));
         connect(philosofers.value(i)->getGraphics(), SIGNAL(showInfoInLog(QString)),
                 p_textInfo, SLOT(append(QString)));
     }
