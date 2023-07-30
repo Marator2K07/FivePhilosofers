@@ -63,11 +63,13 @@ void Philosopher::taskExecution()
                           QString("Философ <font color=\"%1\" size=\"4\">%2</font> закончил размышлять;")
                               .arg(color, name),
                           "grey");
-        blocked = leftMutex->try_lock();
+        QThread::msleep(defaultPause);
         emit changeStatus("Пытается взять левую вилку",
                           QString("Философ <font color=\"%1\" size=\"4\">%2</font> пытается взять левую вилку;")
                               .arg(color, name),
                           "grey");
+        QThread::msleep(time);
+        blocked = leftMutex->try_lock();
         if (blocked) {
             emit takeLeftFork(color);
             emit changeStatus("Успешно взял левую вилку",
@@ -86,11 +88,13 @@ void Philosopher::taskExecution()
                               QString("Философ <font color=\"%1\" size=\"4\">%2</font> закончил размышлять;")
                                   .arg(color, name),
                               "grey");
-            blocked = rightMutex->try_lock();
+            QThread::msleep(defaultPause);
             emit changeStatus("Пытается взять правую вилку",
                               QString("Философ <font color=\"%1\" size=\"4\">%2</font> пытается взять правую вилку;")
                                   .arg(color, name),
                               "grey");
+            QThread::msleep(time);
+            blocked = rightMutex->try_lock();
             if (blocked) {
                 emit takeRightFork(color);
                 emit changeStatus("Успешно взял правую вилку",
@@ -118,8 +122,27 @@ void Philosopher::taskExecution()
                 emit putRightFork();
                 rightMutex->unlock();
             }
+            else {
+                emit changeStatus("Не смог взять правую вилку",
+                                  QString("Философ <font color=\"%1\" size=\"4\">%2</font> не смог взять правую вилку;")
+                                      .arg(color, name),
+                                  "grey");
+                QThread::msleep(defaultPause);
+                emit changeStatus("Кладет левую вилку обратно",
+                                  QString("Философ <font color=\"%1\" size=\"4\">%2</font> сдается и кладет левую вилку обратно на стол;")
+                                      .arg(color, name),
+                                  "grey");
+                QThread::msleep(defaultPause);
+            }
             emit putLeftFork();
             leftMutex->unlock();
+        }
+        else {
+            emit changeStatus("Не смог взять левую вилку",
+                              QString("Философ <font color=\"%1\" size=\"4\">%2</font> не смог взять левую вилку;")
+                                  .arg(color, name),
+                              "grey");
+            QThread::msleep(defaultPause);
         }
 
         //rightForkLocker.lock();
